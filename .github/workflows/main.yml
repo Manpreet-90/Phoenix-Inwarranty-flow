@@ -21,7 +21,7 @@ jobs :
      - name: Install node.js and npm
        uses: actions/setup-node@v6.4.0
        with:
-         node-version :'22'
+         node-version:'22'
 
       - name: Install newman and htmlextra globally
         run: |     #npm install -g newman && newman-reporter-htmlextra
