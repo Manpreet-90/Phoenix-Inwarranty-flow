@@ -3,25 +3,25 @@ name: Postman Collection workflow
 on:
   push:
     branches: [main]  
-  workflow-dispatch:
+  workflow_dispatch:
   schedule:
     - cron : 30 08 * * *  #8am UTC
     - cron : 00 06 * * * #6pm UTC
     - cron : 00 12 * * 1-5 #12pm monday to friday
   
-jobs:
- run-postman-tests:
- runs-on: ubuntu-latest
+jobs :
+ run-postman-tests :
+ runs-on : ubuntu-latest
 
 
- steps:
+ steps :
     - name : checkout the code 
-      uses: actions/checkout@v6.0.2
+      uses : actions/checkout@v6.0.2
     
-    - name: Install node.js and npm
-      uses: actions/setup-node@v6.4.0
-      with:
-        node-version:'24'
+    - name : Install node.js and npm
+      uses : actions/setup-node@v6.4.0
+      with :
+        node-version :'24'
 
      - name : Install newman and html-extra globally
        run: |  #npm install -g newman && newman-reporter-htmlextra
