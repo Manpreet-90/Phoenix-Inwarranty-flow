@@ -6,19 +6,22 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '30 08 * * *'
-    - cron: '00 06 * * *'
+    - cron: '00 18 * * *'
     - cron: '00 12 * * 1-5'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   run-postman-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout the code
-        uses: actions/checkout@v4
+      - name: Checkout the code
+        uses: actions/checkout@v6
 
       - name: Install node.js and npm
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
 
@@ -34,9 +37,9 @@ jobs:
           -d "TestData.csv" \
           -r cli,htmlextra
 
-       - name: Newman report
-         uses: actions/download-artifact@v3.1.0
-         with:
-           name: Newman Report
-           path: newman/*.html
-       
+      - name: Upload Newman Report
+        uses: actions/upload-artifact@v4
+        if: always() # This ensures the report is saved even if tests fail
+        with:
+          name: Newman-Report
+          path: newman/*.html
