@@ -53,7 +53,7 @@ jobs:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME}}
-          passowrd: ${{ secrets.EMAIL_PASSWORD}}
+          password: ${{ secrets.EMAIL_PASSWORD}}
           subject: Phoenix Inwarranty Test Flow execution Notification
           to: way2manpreet90@gmail.com
           from: ${{ secrets.EMAIL_USERNAME}}
