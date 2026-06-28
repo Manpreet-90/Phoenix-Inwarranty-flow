@@ -5,8 +5,8 @@ on:
   workflow_dispatch: 
   schedule:
     - cron: '00 08 * * *'
-    - cron: '00 06 * * *'
-    - cron: '30 12 * * 1-5'
+    - cron: '00 00 * * *'
+    - cron: '30 12 * * 1'
 jobs:
   run-postman-tests:
     runs-on: ubuntu-latest
