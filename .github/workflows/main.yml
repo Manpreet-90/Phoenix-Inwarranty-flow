@@ -1,45 +1,65 @@
-name: Postman Collection workflow
-
+name: Postman Inwarranty Flow Collection
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  push: 
+      branches: [main]
+  workflow_dispatch: 
   schedule:
-    - cron: '30 08 * * *'
-    - cron: '00 18 * * *'
-    - cron: '00 12 * * 1-5'
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
+    - cron: '00 08 * * *'
+    - cron: '00 00 * * *'
+    - cron: '30 12 * * 1'
 jobs:
   run-postman-tests:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v6
-
-      - name: Install node.js and npm
-        uses: actions/setup-node@v6
+      - name: Check checkout Code
+        uses: actions/checkout@v6.0.2
+      
+      - name: Install nodejs
+        uses: actions/setup-node@v6.5.0
         with:
           node-version: '24'
 
-      - name: Install newman and htmlextra globally
+      - name: Install npm and newman
         run: |
-          npm install -g newman
-          npm install -g newman-reporter-htmlextra
+            npm install -g newman
+            npm install -g newman-reporter-htmlextra
 
-      - name: Run the Postman Collection from Newman
+      - name: Run Collection
         run: |
-          newman run "InWarrantyFlow TestData.postman_collection.json" \
-          -e "QA.postman_environment.json" \
-          -d "TestData.csv" \
-          -r cli,htmlextra
+            newman run "InWarrantyFlow TestData.postman_collection.json" \
+            -e "QA.postman_environment.json" \
+            -d "TestData.csv" \
+            -r cli,htmlextra \
+            --reporter-htmlextra-export ./newman/index.html
 
-      - name: Upload Newman Report
-        uses: actions/upload-artifact@v4
-        if: always() # This ensures the report is saved even if tests fail
+      - name: Make Report
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
         with:
-          name: Newman-Report
+          name: newman-html-report
           path: newman/*.html
+
+      - name: Creating Github Page Branch
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+             github_token: ${{ secrets.GITHUB_TOKEN}}
+             publish_dir: ./newman
+
+      - name: Send Email Notification
+        if: always()
+        uses: dawidd6/action-send-mail@v17
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME}}
+          password: ${{ secrets.EMAIL_PASSWORD}}
+          subject: Phoenix Inwarranty Test Flow execution Notification
+          to: dhimanprt@gmail.com
+          from: ${{ secrets.EMAIL_USERNAME}}
+          body: |
+             Hi,
+             Phoenix Inwarranty Flow Tests has been executed.The Report has been published
+             and the url is: https://manpreet-90.github.io/Phoenix-Inwarranty-flow/
+          
+          
